@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Product;
+use Faker\Generator as Faker;
 class ProductsTableSeeder extends Seeder
 {
     /**
