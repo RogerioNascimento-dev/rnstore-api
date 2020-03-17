@@ -1,78 +1,64 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+# Micro sistema para registrar venda de produtos
+Obs: para que seja mais simples visualizar e testar o que foi desenvolvido, fiz o deployer do backend e do frontend em um servidor free do HEROKU, logo não me atentarei neste documento a afalar sobre como instalar o projeto localmente.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+## [LINK DO FRONTEND INEGRADO COM API](https://rnstore-front.herokuapp.com)
+## [LINK DA API](https://rnstore-api.herokuapp.com/)
 
-## About Laravel
+## Problema
+### Sistema de Vendas
+* O cliente pediu uma aplicação para poder realizar as vendas de produtos da loja;
+* Ele também quer poder visualizar as vendas que foram realizadas.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Requisitos
+* O Back deve ser uma API REST
+* Modelar a tabela de vendas
+* A venda tem que ter os produtos vendidos, data da compra
+* Uma venda pode ter mais de um produto
+* A única tela de cadastro que você precisa fazer é a de vendas, não precisa criar a tela de cadastro de produtos, somente a tabela no banco de dados. - Popule a tabela de produtos diretamente no banco;
+* Um produto deve conter nome, preço e previsão de entrega (Dias). Todos obrigatórios (lembrando que você não vai criar a tela de cadastro, mas deve tratar isso no banco de dados);
+* O banco de dados não pode permitir 2 produtos com mesma referência;
+* O front fica a seu critério. Atualmente, trabalhamos com Angular mas, você pode usar javascript puro ou algum framework (React/Vue/Angular);
+Considere sempre quantidade 1 para cada item adicionado na tela de venda;
+* Os preços dos produtos sofrem atualização semanal, isso não pode interferir no valor das vendas registradas e de seus produtos. Modele o banco de dados de tal forma a tratar essa questão;
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+# - Bando de dados
+![modelagem database](https://i.ibb.co/BP5DyXg/modelagem-database.png)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Salvo as tabelas users, migrations e failed_jobs que foram criadas automaticamente por padrão pelo laravel no momento da execução da migration, a modelagem que atendeu esta implementação ficou com as seguintes entidades.
+* sales onde ficam armazenada as vendas
+* customers uma simples tabela de cliente para que as vendas seja identificadas, logo cada venda pertence a um único cliente e um cliente pode possuir varias vendas associadas a ele.
+* products onde estão os registros dos produtos que por sua vez está associado a uma tabela pivot product_sale, tabela esta reaponsável em realizar a relação de n:n de produtos com venda, ou seja, cada produto pode estár associado a várias vendas e uma venda pode está associada a vários produtos.
+# - [Frontend React](https://rnstore-front.herokuapp.com)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Segue algumas observações e libs utilizadas no frontend
+* [Redux](https://www.npmjs.com/package/redux) e [React-redux](https://www.npmjs.com/package/react-redux) para gerir de forma escalável o compartilhamento de estados dentro da aplicação;
+* [react-toastify](https://www.npmjs.com/package/react-toastify) pequeno componente de alerta para um feedback mais agradável;
+* [date-fns](https://www.npmjs.com/package/date-fns) formatação de datas;
+* [Styled-components](https://github.com/styled-components/styled-components) estilização;
+* [Axios](https://www.npmjs.com/package/axios) para requisições acícronas com api
 
-## Laravel Sponsors
+### Funcionalidades implementadas
+* Listagem de produtos
+* Adição e remoção de produtos no carrinho
+* Possíbilidade de alterar a quantidade do produto no carrinho
+* Cálculo de subtotal baseado no valor e quantidade do produto
+* Cálculo do total da compra antes do fechamento
+* Seleção de cliente no carrinho de compra
+* Previsão de entrega com base na maior data de entrega do produto adicionado
+* listagem de compras
+* Exclusão de compras
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+# - Backend api Rest em LARAVEL 7.X
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
 
-## Contributing
+### Endpoints
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Verbo  | Endpoint | Descrição | Body | Param |
+| ------ | ------ | ------ | ------ | ------ |
+| GET | /api/customers | Retorna todos os clientes cadastrados | ||
+| GET | /api/products | Retorna todos os produtos cadastrados | ||
+| GET | /api/sales | Retorna todas as vendas cadastradas |||
+| GET | /api/sales/{id} | Retorna dados de uma venda específica || id|
+| POST | /api/sales | Cadastra uma venda | objeto com array dos produtos e dados da compra desejados|
